@@ -18,6 +18,8 @@ vanilla_model.CAPE:setVisible(false)
 vanilla_model.ELYTRA:setVisible(false)
 modelpath.World.bone:setVisible(false)
 modelpath.World.bone2:setVisible(false)
+
+
 modelpath.World.bone:setPrimaryRenderType("cutout_EMISSIVE_solid")
 --modelpath.World.bone:setSecondaryRenderType("")
 modelpath.World.bone:setOpacity(1)
@@ -29,7 +31,9 @@ modelpath.World.bone2:setOpacity(1)
 --skirt swing
 local swingPhys=require("Scripts.swinging_physics") -- slightly modified
 local swingPhysB=require("Scripts.swinging_physicsB") -- used for hair, needed for different physics parameters
-function pings.skirtPhys(state)
+
+
+function pings.skirtPhys(state) --toggle for skirt physics, set to true in entity_init
         for i=1, 10 do
             s=i*36 --converts skirt part number to degrees
             if state==true then
@@ -92,7 +96,7 @@ eyeAnims.config.faceDirection = true
 eyeAnims:newBlink(animations.sakuya.blink)
 
 function events.entity_init()
-    modelpath.Player:copy("EHud"):moveTo(modelpath.HUD):setPos(-90, -25, 90):setRot(180, 150, 0)
+    modelpath.Player:copy("EHud"):moveTo(modelpath.HUD):setPos(-90, -25, 90):setRot(180, 150, 0)  --base code for the mini-me
     modelpath.HUD.EHud:setVisible(false)
 end
 
@@ -154,6 +158,9 @@ function pings.knifeDome(state)
         modelpath.Player:setParentType("Player")
         modelpath.Player:setPos(0,0,0)
         modelpath.Player:setRot(0,0,0)
+        for i=1, 10 do
+            modelpath.World["ee"..i]:setVisible(false)
+        end
     end
 end
 
@@ -176,7 +183,7 @@ local miniMeTog=custPage:newAction()
     :setOnToggle(miniMe)
 
 local skitPhysTog=physPage:newAction()
-    :title("Toggle Skirt Physics"..string.char(10).."not currently working, if you know how to set this up in SwingingPhysics please dm me")
+    :title("Toggle Skirt Physics")
     :item("blue_banner")
     :setOnToggle(pings.skirtPhys)
 
@@ -184,19 +191,20 @@ local skitPhysTog=physPage:newAction()
 
 
 
-function swordse(i)
+function swordse(i, state)
     modelpath.World.ee:copy("ee" .. i):moveTo(modelpath.World)
     ea = "ee" .. i
     modelpath.World[ea]:setScale(10, 10, 10)
     modelpath.World[ea]:setPos(hitPos*16+vectors.rotateAroundAxis(36*i, vec(0, -0.5, 3), vec(0,1,0))*16)
+    modelpath.World[ea]:setVisible(true)
 end
 
-function swordsa()
+function swordsa(state)
     local wrldtime = world.getTime()
     local i=1
     function events.tick()
         if wrldtime-wrldtime+i <= 10 then
-            swordse(i)
+            swordse(i, state)
         end
         i=i+1
     end
